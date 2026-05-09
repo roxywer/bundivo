@@ -4,8 +4,9 @@
   "private": true,
   "scripts": {
     "dev": "nest start --watch",
-    "build": "nest build",
+    "build": "prisma generate && nest build",
     "start": "node dist/main",
+    "start:prod": "node dist/main",
     "db:push": "prisma db push",
     "db:generate": "prisma generate",
     "db:studio": "prisma studio"
@@ -33,10 +34,12 @@
     "zod": "^3.23.8"
   },
   "devDependencies": {
+    "@types/node": "^20",
+    "@types/passport-jwt": "^4.0.1"
+  },
+  "optionalDependencies": {
     "@nestjs/cli": "^10.3.0",
     "@nestjs/schematics": "^10.1.0",
-    "@types/node": "^20",
-    "@types/passport-jwt": "^4.0.1",
     "prisma": "^5.14.0",
     "ts-node": "^10.9.2",
     "typescript": "^5"

@@ -6,12 +6,18 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger'
 async function bootstrap() {
   const app = await NestFactory.create(AppModule)
 
-  app.setGlobalPrefix('api/v1')
+  app.setGlobalPrefix('api/v1', { exclude: ['health'] })
 
   app.enableCors({
-    origin: process.env.FRONTEND_URL || 'http://localhost:3000',
+    origin: [
+      process.env.FRONTEND_URL || 'http://localhost:3000',
+      /\.vercel\.app$/,
+      'http://localhost:3000',
+    ],
     credentials: true,
   })
+
+  app.getHttpAdapter().get('/health', (_req: any, res: any) => res.json({ status: 'ok' }))
 
   app.useGlobalPipes(new ValidationPipe({ whitelist: true, transform: true }))
 
