@@ -1,0 +1,17 @@
+{
+  "name": "bundivo-v2",
+  "private": true,
+  "workspaces": [
+    "apps/*",
+    "packages/*"
+  ],
+  "scripts": {
+    "dev:web": "npm run dev --workspace=apps/web",
+    "dev:api": "npm run dev --workspace=apps/api",
+    "build:web": "npm run build --workspace=apps/web",
+    "build:api": "npm run build --workspace=apps/api"
+  },
+  "dependencies": {
+    "socket.io-client": "^4.8.3"
+  }
+}

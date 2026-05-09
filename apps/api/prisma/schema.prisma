@@ -1,0 +1,134 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
+}
+
+model User {
+  id          String        @id @default(cuid())
+  fullName    String?       @map("full_name")
+  phone       String        @unique
+  email       String?       @unique
+  avatar      String?
+  role        Role          @default(USER)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @default(now()) @updatedAt @map("updated_at")
+  memberships GroupMember[]
+  groupsOwned Group[]       @relation("GroupOwner")
+  payments    Payment[]
+
+  @@map("users")
+}
+
+model Group {
+  id               String        @id @default(cuid())
+  name             String
+  subscriptionType String        @map("subscription_type")
+  targetAmount     Float         @map("target_amount")
+  currentAmount    Float         @default(0) @map("current_amount")
+  maxMembers       Int           @map("max_members")
+  status           GroupStatus   @default(FORMING)
+  renewalDate      DateTime?     @map("renewal_date")
+  createdAt        DateTime      @default(now()) @map("created_at")
+  updatedAt        DateTime      @default(now()) @updatedAt @map("updated_at")
+  ownerId          String        @map("owner_id")
+  members          GroupMember[]
+  owner            User          @relation("GroupOwner", fields: [ownerId], references: [id])
+  invitations      Invitation[]
+  payments         Payment[]
+  subscription     Subscription?
+
+  @@map("groups")
+}
+
+model GroupMember {
+  id            String        @id @default(cuid())
+  role          MemberRole    @default(MEMBER)
+  paymentStatus PaymentStatus @default(PENDING) @map("payment_status")
+  joinedAt      DateTime      @default(now()) @map("joined_at")
+  userId        String        @map("user_id")
+  groupId       String        @map("group_id")
+  group         Group         @relation(fields: [groupId], references: [id], onDelete: Cascade)
+  user          User          @relation(fields: [userId], references: [id], onDelete: Cascade)
+
+  @@unique([userId, groupId])
+  @@map("group_members")
+}
+
+model Payment {
+  id                String        @id @default(cuid())
+  amount            Float
+  mpesaReceipt      String?       @unique @map("mpesa_receipt")
+  merchantRequestId String?       @map("merchant_request_id")
+  checkoutRequestId String?       @unique @map("checkout_request_id")
+  status            PaymentStatus @default(PENDING)
+  createdAt         DateTime      @default(now()) @map("created_at")
+  updatedAt         DateTime      @default(now()) @updatedAt @map("updated_at")
+  userId            String        @map("user_id")
+  groupId           String        @map("group_id")
+  group             Group         @relation(fields: [groupId], references: [id])
+  user              User          @relation(fields: [userId], references: [id])
+
+  @@map("payments")
+}
+
+model Subscription {
+  id            String             @id @default(cuid())
+  provider      String
+  platformEmail String             @map("platform_email")
+  recoveryEmail String?            @map("recovery_email")
+  status        SubscriptionStatus @default(INACTIVE)
+  renewalCost   Float              @map("renewal_cost")
+  createdAt     DateTime           @default(now()) @map("created_at")
+  updatedAt     DateTime           @default(now()) @updatedAt @map("updated_at")
+  groupId       String             @unique @map("group_id")
+  group         Group              @relation(fields: [groupId], references: [id])
+
+  @@map("subscriptions")
+}
+
+model Invitation {
+  id          String    @id @default(cuid())
+  inviteToken String    @unique @map("invite_token")
+  expiresAt   DateTime  @map("expires_at")
+  usedAt      DateTime? @map("used_at")
+  createdAt   DateTime  @default(now()) @map("created_at")
+  groupId     String    @map("group_id")
+  group       Group     @relation(fields: [groupId], references: [id], onDelete: Cascade)
+
+  @@map("invitations")
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
+enum GroupStatus {
+  FORMING
+  FUNDED
+  ACTIVE
+  EXPIRED
+}
+
+enum MemberRole {
+  OWNER
+  MEMBER
+}
+
+enum PaymentStatus {
+  PENDING
+  PROCESSING
+  COMPLETED
+  FAILED
+}
+
+enum SubscriptionStatus {
+  INACTIVE
+  ACTIVE
+  SUSPENDED
+}
