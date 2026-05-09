@@ -2,7 +2,7 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Users, Shield, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
+import { Shield, Loader2, ChevronLeft, ChevronRight } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatDate, getInitials } from '@/lib/utils'
 

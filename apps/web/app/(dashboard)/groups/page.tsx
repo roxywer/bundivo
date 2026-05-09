@@ -2,10 +2,10 @@
 
 import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
-import { Plus, Users, Music2, Link2 } from 'lucide-react'
+import { Plus, Music2, Link2 } from 'lucide-react'
 import Link from 'next/link'
 import { api } from '@/lib/api'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 import { SkeletonCard } from '@/components/ui/Skeleton'
 import { InviteModal } from '@/components/ui/InviteModal'
 import { toast } from '@/components/ui/Toast'

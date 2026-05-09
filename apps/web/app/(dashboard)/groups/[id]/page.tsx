@@ -3,7 +3,7 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Users, Music2, Loader2, CheckCircle2, Clock, XCircle, Link2, CreditCard } from 'lucide-react'
+import { ArrowLeft, Music2, Loader2, CheckCircle2, Clock, XCircle, Link2, CreditCard } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getInitials } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'

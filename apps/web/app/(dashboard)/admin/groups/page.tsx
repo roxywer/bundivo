@@ -4,7 +4,7 @@ import { useEffect, useState } from 'react'
 import { motion } from 'framer-motion'
 import { Music2, Loader2, CheckCheck, ChevronLeft, ChevronRight } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatCurrency, formatDate } from '@/lib/utils'
+import { formatCurrency } from '@/lib/utils'
 
 interface Group {
   id: string; name: string; subscriptionType: string; status: string

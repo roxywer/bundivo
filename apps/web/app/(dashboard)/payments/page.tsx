@@ -6,7 +6,6 @@ import { CreditCard, CheckCircle2, XCircle, Clock } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate } from '@/lib/utils'
 import { SkeletonRow } from '@/components/ui/Skeleton'
-import { toast } from '@/components/ui/Toast'
 
 interface Payment {
   id: string; amount: number; status: string; createdAt: string

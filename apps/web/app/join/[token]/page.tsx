@@ -3,9 +3,8 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { Music2, Users, Loader2, ArrowRight } from 'lucide-react'
+import { Loader2 } from 'lucide-react'
 import { api } from '@/lib/api'
-import { formatCurrency } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 
 interface GroupPreview {
@@ -18,9 +17,8 @@ export default function JoinGroupPage() {
   const { token } = useParams<{ token: string }>()
   const router = useRouter()
   const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
-  const [group, setGroup] = useState<GroupPreview | null>(null)
   const [loading, setLoading] = useState(false)
-  const [joining, setJoining] = useState(false)
+  const [joining] = useState(false)
   const [error, setError] = useState('')
 
   useEffect(() => {
@@ -30,10 +28,10 @@ export default function JoinGroupPage() {
     }
     setLoading(true)
     api.post<GroupPreview>(`/groups/join/${token}`, {})
-      .then((g) => { setGroup(g); router.push(`/groups/${g.id}`) })
+      .then((g) => { router.push(`/groups/${g.id}`) })
       .catch((err) => setError(err.message || 'Invalid or expired invite link'))
       .finally(() => setLoading(false))
-  }, [token, isAuthenticated])
+  }, [token, isAuthenticated, router])
 
   if (loading || joining) return (
     <div className="min-h-screen bg-gray-950 flex items-center justify-center">

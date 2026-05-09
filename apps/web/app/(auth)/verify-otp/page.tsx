@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react'
+import { useState, Suspense } from 'react'
 import { useRouter, useSearchParams } from 'next/navigation'
 import { motion } from 'framer-motion'
 import { Loader2, ArrowLeft, CheckCircle2 } from 'lucide-react'
@@ -9,7 +9,7 @@ import { useAuthStore } from '@/store/auth.store'
 import { OtpInput } from '@/components/ui/OtpInput'
 import { toast } from '@/components/ui/Toast'
 
-export default function VerifyOtpPage() {
+function VerifyOtpContent() {
   const router = useRouter()
   const params = useSearchParams()
   const phone = params.get('phone') || ''
@@ -87,5 +87,17 @@ export default function VerifyOtpPage() {
         </div>
       </motion.div>
     </div>
+  )
+}
+
+export default function VerifyOtpPage() {
+  return (
+    <Suspense fallback={
+      <div className="min-h-screen bg-gray-950 flex items-center justify-center">
+        <Loader2 className="w-8 h-8 text-green-500 animate-spin" />
+      </div>
+    }>
+      <VerifyOtpContent />
+    </Suspense>
   )
 }
