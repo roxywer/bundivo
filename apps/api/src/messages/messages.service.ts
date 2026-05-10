@@ -103,32 +103,14 @@ export class MessagesService {
       throw new ForbiddenException('Only admins can access the inbox')
     }
 
-    // Get all groups with unread messages, ordered by most recent message
-    const groups = await this.prisma.group.findMany({
+    // Get all groups that have messages
+    const groupsWithMessages = await this.prisma.group.findMany({
       where: {
         messages: {
           some: { type: 'USER_TO_ADMIN' },
         },
       },
       include: {
-        messages: {
-          where: { type: 'USER_TO_ADMIN' },
-          orderBy: { createdAt: 'desc' },
-          take: 1,
-          include: {
-            sender: { select: { id: true, fullName: true, email: true } },
-          },
-        },
-        _count: {
-          select: {
-            messages: {
-              where: {
-                type: 'USER_TO_ADMIN',
-                status: 'UNREAD',
-              },
-            },
-          },
-        },
         members: {
           include: {
             user: { select: { id: true, fullName: true, email: true } },
@@ -136,20 +118,41 @@ export class MessagesService {
         },
         owner: { select: { id: true, fullName: true, email: true } },
       },
-      orderBy: {
-        messages: {
-          _max: {
-            createdAt: 'desc',
-          },
-        },
-      },
     })
 
-    return groups.map((g) => ({
-      ...g,
-      unreadCount: g._count.messages,
-      lastMessage: g.messages[0],
-    }))
+    // Get messages and unread counts separately for each group
+    const result = await Promise.all(
+      groupsWithMessages.map(async (group) => {
+        const lastMessage = await this.prisma.message.findFirst({
+          where: { groupId: group.id, type: 'USER_TO_ADMIN' },
+          orderBy: { createdAt: 'desc' },
+          include: {
+            sender: { select: { id: true, fullName: true, email: true } },
+          },
+        })
+
+        const unreadCount = await this.prisma.message.count({
+          where: {
+            groupId: group.id,
+            type: 'USER_TO_ADMIN',
+            status: 'UNREAD',
+          },
+        })
+
+        return {
+          ...group,
+          unreadCount,
+          lastMessage,
+        }
+      })
+    )
+
+    // Sort by most recent message
+    return result.sort((a, b) => {
+      const aDate = a.lastMessage?.createdAt || new Date(0)
+      const bDate = b.lastMessage?.createdAt || new Date(0)
+      return new Date(bDate).getTime() - new Date(aDate).getTime()
+    })
   }
 
   async markAsRead(messageId: string, userId: string) {

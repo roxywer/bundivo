@@ -27,6 +27,10 @@ export class PaymentsService {
 
     const amountPerMember = group.targetAmount / group.maxMembers
 
+    if (!user.phone) {
+      throw new BadRequestException('Phone number required for M-Pesa payment. Please add a phone number to your profile.')
+    }
+
     const payment = await this.prisma.payment.create({
       data: { userId, groupId, amount: amountPerMember, status: 'PROCESSING' },
     })
