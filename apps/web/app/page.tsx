@@ -66,8 +66,8 @@ const testimonials = [
 
 const plans = [
   { name: 'Spotify Family', full: 'KES 669', split: 'KES 150', members: 6, color: 'from-green-500 to-emerald-600', popular: true },
-  { name: 'Apple Music Family', full: 'KES 599', split: 'KES 150', members: 6, color: 'from-red-500 to-pink-600', popular: false },
-  { name: 'Canva Pro', full: 'KES 1,200', split: 'KES 300', members: 5, color: 'from-blue-500 to-purple-600', popular: false },
+  { name: 'Apple Music Family', full: 'KES 599', split: 'KES 470', members: 6, color: 'from-red-500 to-pink-600', popular: false },
+  { name: 'ChatGPT Business', full: 'KES 3,600', split: 'KES 600', members: 6, color: 'from-purple-500 to-indigo-600', popular: false },
 ]
 
 export default function LandingPage() {
