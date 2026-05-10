@@ -66,7 +66,8 @@ const testimonials = [
 
 const plans = [
   { name: 'Spotify Family', full: 'KES 669', split: 'KES 150', members: 6, color: 'from-green-500 to-emerald-600', popular: true },
-  { name: 'Spotify Duo', full: 'KES 549', split: 'KES 150', members: 2, color: 'from-blue-500 to-cyan-600', popular: false },
+  { name: 'Apple Music Family', full: 'KES 599', split: 'KES 150', members: 6, color: 'from-red-500 to-pink-600', popular: false },
+  { name: 'Canva Pro', full: 'KES 1,200', split: 'KES 300', members: 5, color: 'from-blue-500 to-purple-600', popular: false },
 ]
 
 export default function LandingPage() {
@@ -116,7 +117,7 @@ export default function LandingPage() {
             <h1 className="text-5xl lg:text-6xl font-black leading-[1.08] tracking-tight mb-6">
               Premium Spotify<br />
               <span className="bg-gradient-to-r from-green-400 via-emerald-400 to-teal-400 bg-clip-text text-transparent">
-                for KES 180/mo
+                for KES 150/mo
               </span>
             </h1>
 
