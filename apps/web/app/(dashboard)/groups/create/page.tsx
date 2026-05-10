@@ -8,8 +8,8 @@ import { api } from '@/lib/api'
 import { formatCurrency } from '@/lib/utils'
 
 const PLANS = [
-  { type: 'Spotify Family', slots: 6, price: 299, total: 1794 },
-  { type: 'Spotify Duo', slots: 2, price: 449, total: 898 },
+  { type: 'Spotify Family', slots: 6, price: 150, total: 900 },
+  { type: 'Spotify Duo', slots: 2, price: 150, total: 300 },
 ]
 
 export default function CreateGroupPage() {
