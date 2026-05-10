@@ -51,7 +51,6 @@ export default function CreateGroupPage() {
         subscriptionType: plan.type,
         maxMembers: finalSlots,
         targetAmount: finalTotal,
-        category: plan.category,
       })
       router.push(`/groups/${group.id}`)
     } catch (err: any) {
