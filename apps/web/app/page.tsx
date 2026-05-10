@@ -4,8 +4,8 @@ import { ArrowRight, Music2, Users, CreditCard, Shield, Zap, CheckCircle2, Star,
 
 const stats = [
   { value: '5,000+', label: 'Active Users' },
-  { value: 'KES 180', label: 'Per Month' },
-  { value: '6x', label: 'Cost Savings' },
+  { value: 'KES 150', label: 'Per Month' },
+  { value: '4x', label: 'Cost Savings' },
   { value: '< 2 min', label: 'Setup Time' },
 ]
 
@@ -44,7 +44,7 @@ const testimonials = [
   {
     name: 'Amina Odhiambo',
     role: 'Nairobi, Student',
-    text: 'I pay KES 180 a month instead of KES 1,099. Bundivo is a total game changer for me!',
+    text: 'I pay KES 150 a month instead of KES 669. Bundivo is a total game changer for me!',
     avatar: 'https://images.unsplash.com/photo-1531123897727-8f129e1688ce?w=80&h=80&fit=crop&crop=face',
     stars: 5,
   },
@@ -65,8 +65,8 @@ const testimonials = [
 ]
 
 const plans = [
-  { name: 'Spotify Premium', full: 'KES 1,099', split: 'KES 183', members: 6, color: 'from-green-500 to-emerald-600', popular: true },
-  { name: 'Spotify Duo', full: 'KES 749', split: 'KES 375', members: 2, color: 'from-blue-500 to-cyan-600', popular: false },
+  { name: 'Spotify Family', full: 'KES 669', split: 'KES 150', members: 6, color: 'from-green-500 to-emerald-600', popular: true },
+  { name: 'Spotify Duo', full: 'KES 549', split: 'KES 150', members: 2, color: 'from-blue-500 to-cyan-600', popular: false },
 ]
 
 export default function LandingPage() {

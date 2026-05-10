@@ -28,7 +28,7 @@ export default function AboutPage() {
           <span className="bg-gradient-to-r from-green-400 to-emerald-500 bg-clip-text text-transparent">Kenyan pocket</span>
         </h1>
         <p className="text-gray-400 text-lg leading-relaxed max-w-2xl mx-auto">
-          Bundivo was built on a simple belief: premium music streaming shouldn't cost most Kenyans an entire day's wage. We make it possible to enjoy Spotify Premium for under KES 200 a month.
+          Bundivo was built on a simple belief: premium music streaming shouldn't cost most Kenyans an entire day's wage. We make it possible to enjoy Spotify Premium for only KES 150 a month.
         </p>
       </section>
 
@@ -48,7 +48,7 @@ export default function AboutPage() {
         <div>
           <h2 className="text-3xl font-black mb-4">Our Story</h2>
           <p className="text-gray-400 leading-relaxed text-lg">
-            Bundivo started in Nairobi in 2024 when a group of music lovers realized they were all paying individually for subscriptions they could split. Spotify Family costs KES 1,099/month — but split between 6 friends, that's just KES 183 each.
+            Bundivo started in Nairobi in 2024 when a group of music lovers realized they were all paying individually for subscriptions they could split. Spotify Family costs KES 669/month — but split between 6 friends, that's just KES 150 each.
           </p>
           <p className="text-gray-400 leading-relaxed text-lg mt-4">
             The problem? There was no safe, structured way to do it. People were sharing passwords, losing access, and dealing with constant payment headaches. We built Bundivo to solve that — a platform that manages everything securely, with M-Pesa as the payment backbone.
@@ -76,7 +76,7 @@ export default function AboutPage() {
       <section className="max-w-3xl mx-auto px-6 pb-24">
         <div className="bg-gradient-to-br from-green-500/10 to-emerald-600/5 border border-green-500/20 rounded-3xl p-12 text-center">
           <h2 className="text-3xl font-black mb-4">Ready to start saving?</h2>
-          <p className="text-gray-400 mb-8">Join thousands of Kenyans already enjoying Spotify Premium for under KES 200.</p>
+          <p className="text-gray-400 mb-8">Join thousands of Kenyans already enjoying Spotify Premium for only KES 150.</p>
           <Link href="/login" className="inline-flex items-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:opacity-90 text-white font-bold px-8 py-3.5 rounded-2xl shadow-xl shadow-green-500/25 transition">
             Get started free <ArrowRight className="w-4 h-4" />
           </Link>
