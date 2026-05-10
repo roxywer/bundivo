@@ -116,7 +116,7 @@ export default function DashboardPage() {
                         <div className="w-full bg-gray-800 rounded-full h-1.5">
                           <div className="bg-gradient-to-r from-green-500 to-emerald-500 h-1.5 rounded-full transition-all" style={{ width: `${Math.min(progress, 100)}%` }} />
                         </div>
-                        <p className="text-gray-500 text-xs mt-1">{formatCurrency(g.currentAmount)} / {formatCurrency(g.targetAmount)}</p>
+                        <p className="text-gray-500 text-xs mt-1">{formatCurrency(g.currentAmount)} collected</p>
                       </div>
                     </div>
                   </Link>
