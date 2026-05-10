@@ -18,11 +18,33 @@ export class CompleteProfileDto {
   @IsEmail() @IsOptional() email?: string
 }
 
+export class RegisterDto {
+  @IsEmail() email: string
+  @IsString() @IsNotEmpty() password: string
+  @IsString() @IsNotEmpty() fullName: string
+}
+
+export class LoginDto {
+  @IsEmail() email: string
+  @IsString() @IsNotEmpty() password: string
+}
+
 @ApiTags('auth')
 @Controller('auth')
 export class AuthController {
   constructor(private auth: AuthService) {}
 
+  @Post('register')
+  register(@Body() dto: RegisterDto) {
+    return this.auth.register(dto.email, dto.password, dto.fullName)
+  }
+
+  @Post('login')
+  login(@Body() dto: LoginDto) {
+    return this.auth.login(dto.email, dto.password)
+  }
+
+  // OTP methods - dormant for now
   @Post('send-otp')
   sendOtp(@Body() dto: SendOtpDto) {
     return this.auth.sendOtp(dto.phone)

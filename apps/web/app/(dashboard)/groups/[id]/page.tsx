@@ -3,13 +3,12 @@
 import { useEffect, useState } from 'react'
 import { useParams, useRouter } from 'next/navigation'
 import { motion } from 'framer-motion'
-import { ArrowLeft, Music2, Loader2, CheckCircle2, Clock, XCircle, Link2, CreditCard } from 'lucide-react'
+import { ArrowLeft, Music2, Loader2, CheckCircle2, Clock, XCircle, Link2, MessageCircle } from 'lucide-react'
 import { api } from '@/lib/api'
 import { formatCurrency, formatDate, getInitials } from '@/lib/utils'
 import { useAuthStore } from '@/store/auth.store'
 import { useSocket } from '@/hooks/useSocket'
 import { useRealtimeStore } from '@/store/realtime.store'
-import { MpesaModal } from '@/components/ui/MpesaModal'
 import { InviteModal } from '@/components/ui/InviteModal'
 import { toast } from '@/components/ui/Toast'
 
@@ -44,8 +43,10 @@ export default function GroupDetailPage() {
   const user = useAuthStore((s) => s.user)
   const [group, setGroup] = useState<GroupDetail | null>(null)
   const [loading, setLoading] = useState(true)
-  const [payModal, setPayModal] = useState(false)
   const [inviteModal, setInviteModal] = useState(false)
+  const [messageModal, setMessageModal] = useState(false)
+  const [adminMessage, setAdminMessage] = useState('')
+  const [sendingMessage, setSendingMessage] = useState(false)
 
   useSocket(id)
   const liveProgress = useRealtimeStore((s) => s.groupProgress[id])
@@ -60,7 +61,7 @@ export default function GroupDetailPage() {
   const reload = () => api.get<GroupDetail>(`/groups/${id}`).then(setGroup)
 
   const myMembership = group?.members.find((m) => m.user.id === user?.id)
-  const canPay = myMembership && myMembership.paymentStatus !== 'COMPLETED' && group?.status !== 'ACTIVE'
+  const isMember = !!myMembership
   const currentAmount = liveProgress?.currentAmount ?? group?.currentAmount ?? 0
   const targetAmount = group?.targetAmount ?? 1
   const progress = Math.min((currentAmount / targetAmount) * 100, 100)
@@ -181,31 +182,72 @@ export default function GroupDetailPage() {
             </div>
           </div>
 
-          {canPay && (
+          {isMember && group?.status === 'FORMING' && (
             <div className="bg-gray-900 border border-gray-800 rounded-2xl p-5">
-              <h3 className="text-white font-semibold text-sm mb-3">Your Payment</h3>
-              <p className="text-3xl font-bold text-green-400 mb-1">{formatCurrency(group.targetAmount / group.maxMembers)}</p>
-              <p className="text-gray-500 text-xs mb-4">Paid via M-Pesa STK Push</p>
+              <h3 className="text-white font-semibold text-sm mb-3">Ready to Purchase?</h3>
+              <p className="text-gray-500 text-xs mb-4">
+                Contact the admin to arrange payment for this {group.subscriptionType} subscription.
+              </p>
               <motion.button
                 whileHover={{ scale: 1.01 }} whileTap={{ scale: 0.99 }}
-                onClick={() => setPayModal(true)}
-                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-green-500/25 text-sm"
+                onClick={() => setMessageModal(true)}
+                className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-blue-500 to-blue-600 hover:from-blue-400 hover:to-blue-500 text-white font-semibold py-3 rounded-xl transition-all shadow-lg shadow-blue-500/25 text-sm"
               >
-                <CreditCard className="w-4 h-4" /> Pay with M-Pesa
+                <MessageCircle className="w-4 h-4" /> Contact Admin
               </motion.button>
             </div>
           )}
         </div>
       </div>
-      {payModal && (
-        <MpesaModal
-          open={payModal}
-          onClose={() => setPayModal(false)}
-          groupId={group.id}
-          groupName={group.name}
-          amount={group.targetAmount / group.maxMembers}
-          onSuccess={reload}
-        />
+      {messageModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/60 backdrop-blur-sm">
+          <motion.div
+            initial={{ opacity: 0, scale: 0.95 }}
+            animate={{ opacity: 1, scale: 1 }}
+            className="bg-gray-900 border border-gray-800 rounded-2xl p-6 w-full max-w-md shadow-2xl"
+          >
+            <h3 className="text-white font-semibold mb-2">Message Admin</h3>
+            <p className="text-gray-400 text-sm mb-4">
+              Send a message about purchasing <span className="text-green-400">{group?.name}</span>
+            </p>
+            <textarea
+              value={adminMessage}
+              onChange={(e) => setAdminMessage(e.target.value)}
+              placeholder="Hi, I'm interested in joining this group. How do I proceed with payment?"
+              className="w-full bg-gray-800 border border-gray-700 rounded-xl p-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 min-h-[100px] resize-none"
+            />
+            <div className="flex gap-3 mt-4">
+              <button
+                onClick={() => setMessageModal(false)}
+                className="flex-1 py-2.5 rounded-xl text-gray-400 hover:text-white hover:bg-gray-800 transition"
+              >
+                Cancel
+              </button>
+              <button
+                onClick={async () => {
+                  setSendingMessage(true)
+                  try {
+                    await api.post('/messages/to-admin', {
+                      groupId: group?.id,
+                      message: adminMessage || `I'm interested in purchasing ${group?.subscriptionType} through the group "${group?.name}". Please let me know the next steps.`
+                    })
+                    toast.success('Message sent!', 'Admin will contact you soon.')
+                    setMessageModal(false)
+                    setAdminMessage('')
+                  } catch {
+                    toast.error('Failed to send', 'Please try again later.')
+                  } finally {
+                    setSendingMessage(false)
+                  }
+                }}
+                disabled={sendingMessage}
+                className="flex-1 py-2.5 rounded-xl bg-gradient-to-r from-green-500 to-emerald-600 text-white font-medium hover:from-green-400 hover:to-emerald-500 disabled:opacity-50 transition"
+              >
+                {sendingMessage ? 'Sending...' : 'Send Message'}
+              </button>
+            </div>
+          </motion.div>
+        </div>
       )}
       {invite && inviteModal && (
         <InviteModal

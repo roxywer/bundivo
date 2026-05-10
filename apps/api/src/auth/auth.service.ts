@@ -1,7 +1,8 @@
-import { Injectable, UnauthorizedException, BadRequestException } from '@nestjs/common'
+import { Injectable, UnauthorizedException, BadRequestException, ConflictException } from '@nestjs/common'
 import { JwtService } from '@nestjs/jwt'
 import { PrismaService } from '../prisma/prisma.service'
 import { SupabaseService } from './supabase.service'
+import * as bcrypt from 'bcryptjs'
 
 @Injectable()
 export class AuthService {
@@ -11,6 +12,35 @@ export class AuthService {
     private supabase: SupabaseService,
   ) {}
 
+  // Email/Password Register
+  async register(email: string, password: string, fullName: string) {
+    const existing = await this.prisma.user.findUnique({ where: { email } })
+    if (existing) throw new ConflictException('Email already registered')
+
+    const hashedPassword = await bcrypt.hash(password, 10)
+    const user = await this.prisma.user.create({
+      data: { email, password: hashedPassword, fullName },
+    })
+
+    const accessToken = this.jwt.sign({ sub: user.id, email: user.email })
+    return { accessToken, user }
+  }
+
+  // Email/Password Login
+  async login(email: string, password: string) {
+    const user = await this.prisma.user.findUnique({ where: { email } })
+    if (!user || !user.password) {
+      throw new UnauthorizedException('Invalid email or password')
+    }
+
+    const isValid = await bcrypt.compare(password, user.password)
+    if (!isValid) throw new UnauthorizedException('Invalid email or password')
+
+    const accessToken = this.jwt.sign({ sub: user.id, email: user.email })
+    return { accessToken, user }
+  }
+
+  // Keep OTP methods for backward compatibility (dormant)
   async sendOtp(phone: string) {
     const normalized = this.normalizePhone(phone)
     const { error } = await this.supabase.sendOtp(normalized)

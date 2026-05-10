@@ -5,7 +5,7 @@ import { usePathname } from 'next/navigation'
 import { motion } from 'framer-motion'
 import {
   LayoutDashboard, Users, CreditCard, Settings, LogOut,
-  Music2, Shield, BarChart3, ChevronRight
+  Music2, Shield, BarChart3, ChevronRight, MessageCircle
 } from 'lucide-react'
 import { useAuthStore } from '@/store/auth.store'
 import { useRouter } from 'next/navigation'
@@ -20,6 +20,7 @@ const userLinks = [
 
 const adminLinks = [
   { href: '/admin', label: 'Overview', icon: BarChart3 },
+  { href: '/admin/inbox', label: 'Inbox', icon: MessageCircle },
   { href: '/admin/users', label: 'Users', icon: Users },
   { href: '/admin/groups', label: 'Groups', icon: Users },
   { href: '/admin/payments', label: 'Payments', icon: CreditCard },
@@ -83,11 +84,11 @@ export default function Sidebar() {
       <div className="p-3 border-t border-gray-800">
         <div className="flex items-center gap-3 px-3 py-2.5 mb-2">
           <div className="w-8 h-8 rounded-full bg-gradient-to-br from-green-500 to-emerald-600 flex items-center justify-center text-white text-xs font-bold shrink-0">
-            {user?.fullName?.[0]?.toUpperCase() || user?.phone?.[0] || '?'}
+            {user?.fullName?.[0]?.toUpperCase() || user?.email?.[0] || '?'}
           </div>
           <div className="flex-1 min-w-0">
             <p className="text-white text-sm font-medium truncate">{user?.fullName || 'User'}</p>
-            <p className="text-gray-500 text-xs truncate">{user?.phone}</p>
+            <p className="text-gray-500 text-xs truncate">{user?.email || user?.phone}</p>
           </div>
         </div>
         <button

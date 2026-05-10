@@ -8,6 +8,7 @@ import { GroupsModule } from './groups/groups.module'
 import { PaymentsModule } from './payments/payments.module'
 import { AdminModule } from './admin/admin.module'
 import { RealtimeModule } from './realtime/realtime.module'
+import { MessagesModule } from './messages/messages.module'
 
 @Module({
   imports: [
@@ -20,6 +21,7 @@ import { RealtimeModule } from './realtime/realtime.module'
     PaymentsModule,
     AdminModule,
     RealtimeModule,
+    MessagesModule,
   ],
 })
 export class AppModule {}

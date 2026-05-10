@@ -4,12 +4,16 @@ import { useState } from 'react'
 import { useRouter } from 'next/navigation'
 import Link from 'next/link'
 import { motion } from 'framer-motion'
-import { Phone, ArrowRight, Loader2 } from 'lucide-react'
+import { Mail, Lock, ArrowRight, Loader2 } from 'lucide-react'
 import { api } from '@/lib/api'
+import { useAuthStore } from '@/store/auth.store'
+import { toast } from '@/components/ui/Toast'
 
 export default function LoginPage() {
   const router = useRouter()
-  const [phone, setPhone] = useState('')
+  const setAuth = useAuthStore((s) => s.setAuth)
+  const [email, setEmail] = useState('')
+  const [password, setPassword] = useState('')
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
 
@@ -18,10 +22,12 @@ export default function LoginPage() {
     setError('')
     setLoading(true)
     try {
-      await api.post('/auth/send-otp', { phone })
-      router.push(`/verify-otp?phone=${encodeURIComponent(phone)}`)
+      const res = await api.post<{ accessToken: string; user: any }>('/auth/login', { email, password })
+      setAuth(res.user, res.accessToken)
+      toast.success('Welcome back!', `Good to see you, ${res.user.fullName || 'friend'}`)
+      router.push('/dashboard')
     } catch (err: any) {
-      setError(err.message || 'Failed to send OTP')
+      setError(err.message || 'Invalid email or password')
     } finally {
       setLoading(false)
     }
@@ -40,20 +46,35 @@ export default function LoginPage() {
             <span className="text-white font-bold text-xl">B</span>
           </div>
           <h1 className="text-2xl font-bold text-white">Welcome back</h1>
-          <p className="text-gray-400 mt-1 text-sm">Enter your phone to receive an OTP</p>
+          <p className="text-gray-400 mt-1 text-sm">Sign in with your email and password</p>
         </div>
 
         <div className="bg-gray-900/60 backdrop-blur-xl border border-gray-800 rounded-2xl p-8 shadow-2xl">
           <form onSubmit={handleSubmit} className="space-y-5">
             <div>
-              <label className="block text-sm font-medium text-gray-300 mb-2">Phone Number</label>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Email</label>
               <div className="relative">
-                <Phone className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
                 <input
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="0712 345 678"
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  placeholder="you@example.com"
+                  className="w-full bg-gray-800/80 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
+                  required
+                />
+              </div>
+            </div>
+
+            <div>
+              <label className="block text-sm font-medium text-gray-300 mb-2">Password</label>
+              <div className="relative">
+                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 text-gray-500 w-4 h-4" />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  placeholder="••••••••"
                   className="w-full bg-gray-800/80 border border-gray-700 rounded-xl pl-10 pr-4 py-3 text-white placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-green-500 focus:border-transparent transition"
                   required
                 />
@@ -66,10 +87,10 @@ export default function LoginPage() {
 
             <button
               type="submit"
-              disabled={loading || !phone}
+              disabled={loading || !email || !password}
               className="w-full flex items-center justify-center gap-2 bg-gradient-to-r from-green-500 to-emerald-600 hover:from-green-400 hover:to-emerald-500 disabled:opacity-50 disabled:cursor-not-allowed text-white font-semibold py-3 rounded-xl transition-all duration-200 shadow-lg shadow-green-500/25"
             >
-              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Send OTP <ArrowRight className="w-4 h-4" /></>}
+              {loading ? <Loader2 className="w-4 h-4 animate-spin" /> : <>Sign In <ArrowRight className="w-4 h-4" /></>}
             </button>
           </form>
 
