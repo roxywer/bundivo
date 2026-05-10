@@ -104,7 +104,7 @@ export default function GroupsPage() {
                   </div>
                   <div className="flex justify-between text-xs text-gray-500 mt-1">
                     <span>{formatCurrency(g.currentAmount)}</span>
-                    <span>{formatCurrency(g.targetAmount)}</span>
+                    <span>collected</span>
                   </div>
                 </div>
 

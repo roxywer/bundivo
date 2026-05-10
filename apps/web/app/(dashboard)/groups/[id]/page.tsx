@@ -117,7 +117,7 @@ export default function GroupDetailPage() {
             </div>
             <div className="flex justify-between text-sm mt-2">
               <span className="text-green-400 font-semibold">{formatCurrency(currentAmount)}</span>
-              <span className="text-gray-500">of {formatCurrency(group.targetAmount)}</span>
+              <span className="text-gray-500">collected</span>
             </div>
           </div>
 
