@@ -5,6 +5,14 @@ function getToken() {
   return localStorage.getItem('bundivo_token')
 }
 
+function clearAuth() {
+  if (typeof window !== 'undefined') {
+    localStorage.removeItem('bundivo_token')
+    localStorage.removeItem('bundivo-auth')
+    window.location.href = '/login'
+  }
+}
+
 async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   const token = getToken()
   const res = await fetch(`${API_URL}${path}`, {
@@ -17,6 +25,11 @@ async function request<T>(path: string, options: RequestInit = {}): Promise<T> {
   })
 
   if (!res.ok) {
+    // Handle 401 - token expired or invalid
+    if (res.status === 401) {
+      clearAuth()
+      throw new Error('Session expired. Please sign in again.')
+    }
     const error = await res.json().catch(() => ({ message: 'Request failed' }))
     throw new Error(error.message || 'Request failed')
   }
